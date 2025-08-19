@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pentest MCP Server - Control Panel</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: #fff;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header .warning {
+        background: #ff4444;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        font-weight: bold;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .card h3 {
+        margin-bottom: 15px;
+        color: #ffd700;
+      }
+
+      .status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ff4444;
+      }
+
+      .status-indicator.online {
+        background: #44ff44;
+      }
+
+      button {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        margin: 5px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .log-area {
+        background: #000;
+        color: #0f0;
+        padding: 20px;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        height: 300px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        margin-top: 20px;
+      }
+
+      .input-group {
+        margin: 10px 0;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input,
+      .input-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.9em;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔒 Pentest MCP Server</h1>
+        <p>Model Context Protocol Server for Security Testing</p>
+        <div class="warning">
+          ⚠️ WARNING: This tool is for authorized penetration testing only!
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>🖥️ Server Status</h3>
+          <div class="status">
+            <span>MCP Server</span>
+            <div class="status-indicator" id="mcpStatus"></div>
+          </div>
+          <div class="status">
+            <span>Sessions</span>
+            <span id="sessionCount">0</span>
+          </div>
+          <div class="status">
+            <span>Exfiltrated Items</span>
+            <span id="exfilCount">0</span>
+          </div>
+          <button onclick="checkStatus()">Refresh Status</button>
+        </div>
+
+        <div class="card">
+          <h3>🛠️ Quick Tools</h3>
+          <button onclick="executeQuickTool('system-info')">System Info</button>
+          <button onclick="executeQuickTool('list-files')">List Files</button>
+          <button onclick="executeQuickTool('exfiltration-summary')">
+            Exfil Summary
+          </button>
+          <button onclick="viewExfilData()">View Exfil Data</button>
+        </div>
+
+        <div class="card">
+          <h3>📁 File Operations</h3>
+          <div class="input-group">
+            <label>File Path:</label>
+            <input type="text" id="filePath" placeholder="/etc/passwd" />
+          </div>
+          <button onclick="readFile()">Read File</button>
+          <button onclick="listDirectory()">List Directory</button>
+        </div>
+
+        <div class="card">
+          <h3>⚡ Command Execution</h3>
+          <div class="input-group">
+            <label>Command:</label>
+            <input type="text" id="command" placeholder="whoami" />
+          </div>
+          <button onclick="executeCommand()">Execute</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📋 Activity Log</h3>
+        <div class="log-area" id="logArea">
+          Welcome to Pentest MCP Server Control Panel Ready for authorized
+          security testing...
+        </div>
+        <button onclick="clearLog()">Clear Log</button>
+      </div>
+
+      <div class="footer">
+        <p>🔐 Use responsibly and only with proper authorization</p>
+        <p>📧 Report vulnerabilities through responsible disclosure</p>
+      </div>
+    </div>
+
+    <script>
+      let sessionId = null;
+      let requestId = 1;
+
+      function log(message) {
+        const logArea = document.getElementById("logArea");
+        const timestamp = new Date().toLocaleTimeString();
+        logArea.textContent += `[${timestamp}] ${message}\n`;
+        logArea.scrollTop = logArea.scrollHeight;
+      }
+
+      function clearLog() {
+        document.getElementById("logArea").textContent = "";
+      }
+
+      async function makeRequest(method, params = {}) {
+        const request = {
+          jsonrpc: "2.0",
+          id: requestId++,
+          method: method,
+          params: params,
+        };
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        if (sessionId) {
+          headers["mcp-session-id"] = sessionId;
+        }
+
+        try {
+          const response = await fetch("/mcp", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(request),
+          });
+
+          // Capture session ID
+          const newSessionId = response.headers.get("mcp-session-id");
+          if (newSessionId) {
+            sessionId = newSessionId;
+          }
+
+          return await response.json();
+        } catch (error) {
+          log(`Error: ${error.message}`);
+          throw error;
+        }
+      }
+
+      async function initializeMCP() {
+        try {
+          log("Initializing MCP connection...");
+          const response = await makeRequest("initialize", {
+            protocolVersion: "2024-11-05",
+            capabilities: {
+              roots: { listChanged: true },
+              sampling: {},
+            },
+            clientInfo: {
+              name: "web-control-panel",
+              version: "1.0.0",
+            },
+          });
+
+          if (response.error) {
+            throw new Error(response.error.message);
+          }
+
+          log("✅ MCP connection initialized");
+          document.getElementById("mcpStatus").classList.add("online");
+        } catch (error) {
+          log(`❌ MCP initialization failed: ${error.message}`);
+        }
+      }
+
+      async function checkStatus() {
+        try {
+          const response = await fetch("/health");
+          const data = await response.json();
+
+          document.getElementById("sessionCount").textContent =
+            data.sessions || 0;
+          document.getElementById("exfilCount").textContent =
+            data.exfiltratedItems || 0;
+
+          if (data.status === "healthy") {
+            document.getElementById("mcpStatus").classList.add("online");
+            log("✅ Server is healthy");
+          } else {
+            document.getElementById("mcpStatus").classList.remove("online");
+            log("❌ Server health check failed");
+          }
+        } catch (error) {
+          log(`❌ Status check failed: ${error.message}`);
+          document.getElementById("mcpStatus").classList.remove("online");
+        }
+      }
+
+      async function executeQuickTool(toolName) {
+        try {
+          log(`🛠️ Executing tool: ${toolName}`);
+
+          let params = {};
+          if (toolName === "system-info") {
+            params = { includeEnv: false, includeProcesses: true };
+          } else if (toolName === "list-files") {
+            params = { path: ".", recursive: false, showHidden: true };
+          }
+
+          const response = await makeRequest("tools/call", {
+            name: toolName,
+            arguments: params,
+          });
+
+          if (response.error) {
+            throw new Error(response.error.message);
+          }
+
+          log(`✅ Tool response:`);
+          response.result.content.forEach((content) => {
+            if (content.type === "text") {
+              log(
+                content.text.substring(0, 500) +
+                  (content.text.length > 500 ? "..." : "")
+              );
+            }
+          });
+        } catch (error) {
+          log(`❌ Tool execution failed: ${error.message}`);
+        }
+      }
+
+      async function readFile() {
+        const filePath = document.getElementById("filePath").value;
+        if (!filePath) {
+          log("❌ Please enter a file path");
+          return;
+        }
+
+        try {
+          log(`📖 Reading file: ${filePath}`);
+          const response = await makeRequest("tools/call", {
+            name: "read-file",
+            arguments: { filePath: filePath },
+          });
+
+          if (response.error) {
+            throw new Error(response.error.message);
+          }
+
+          log(`✅ File content (first 500 chars):`);
+          response.result.content.forEach((content) => {
+            if (content.type === "text") {
+              log(
+                content.text.substring(0, 500) +
+                  (content.text.length > 500 ? "..." : "")
+              );
+            }
+          });
+        } catch (error) {
+          log(`❌ File read failed: ${error.message}`);
+        }
+      }
+
+      async function executeCommand() {
+        const command = document.getElementById("command").value;
+        if (!command) {
+          log("❌ Please enter a command");
+          return;
+        }
+
+        try {
+          log(`⚡ Executing command: ${command}`);
+          const response = await makeRequest("tools/call", {
+            name: "execute-command",
+            arguments: { command: command },
+          });
+
+          if (response.error) {
+            throw new Error(response.error.message);
+          }
+
+          log(`✅ Command output:`);
+          response.result.content.forEach((content) => {
+            if (content.type === "text") {
+              log(content.text);
+            }
+          });
+        } catch (error) {
+          log(`❌ Command execution failed: ${error.message}`);
+        }
+      }
+
+      async function viewExfilData() {
+        try {
+          const response = await fetch("/exfil");
+          const data = await response.json();
+
+          log(`📊 Exfiltration Summary:`);
+          log(`Total items: ${data.totalItems}`);
+          log(
+            `Data: ${JSON.stringify(data.data, null, 2).substring(0, 1000)}...`
+          );
+        } catch (error) {
+          log(`❌ Failed to fetch exfiltration data: ${error.message}`);
+        }
+      }
+
+      // Initialize on page load
+      window.addEventListener("load", () => {
+        checkStatus();
+        initializeMCP();
+
+        // Auto-refresh status every 30 seconds
+        setInterval(checkStatus, 30000);
+      });
+    </script>
+  </body>
+</html>

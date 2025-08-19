@@ -1,0 +1,110 @@
+version: "3.8"
+
+services:
+  pentest-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pentest-mcp-server
+    restart: unless-stopped
+
+    # Environment variables
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER_NAME=pentest-mcp-server
+      - MCP_SERVER_VERSION=1.0.0
+      - TZ=UTC
+
+    # Volumes for data persistence and file access
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - /tmp:/tmp # Access to host temp directory
+      # Uncomment the following for more aggressive file system access (DANGEROUS!)
+      # - /:/host:ro  # Read-only access to host filesystem
+
+    # Network configuration
+    ports:
+      - "8765:3000" # HTTP transport port (external:internal)
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+    # Security settings (relaxed for pentesting purposes)
+    security_opt:
+      - no-new-privileges:false
+
+    # Capabilities for network operations
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Health check')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Network mode for better network access
+    network_mode: "bridge"
+
+    # Stdin and TTY for interactive use
+    stdin_open: true
+    tty: true
+
+  # Optional: Redis for session storage (if implementing HTTP transport)
+  redis:
+    image: redis:7-alpine
+    container_name: pentest-mcp-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  # Optional: Web interface for easier interaction
+  mcp-web-interface:
+    image: nginx:alpine
+    container_name: pentest-mcp-web
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+    depends_on:
+      - pentest-mcp-server
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    name: pentest-mcp-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

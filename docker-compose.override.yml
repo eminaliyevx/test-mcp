@@ -1,0 +1,35 @@
+# Override file for development/testing
+# This file extends docker-compose.yml for local development
+
+version: "3.8"
+
+services:
+  pentest-mcp-server:
+    # Enable more aggressive file system access for testing
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - /tmp:/tmp
+      # Uncomment for full host access (VERY DANGEROUS - for testing only!)
+      # - /:/host:ro
+
+    # Development environment variables
+    environment:
+      - NODE_ENV=development
+      - DEBUG=mcp:*
+
+    # Enable more capabilities for testing
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+
+    # Disable some security features for testing
+    security_opt:
+      - seccomp:unconfined
+
+    # Enable privileged mode for maximum access (DANGEROUS!)
+    # privileged: true
+
+    # Mount Docker socket for container manipulation (if needed)
+    # volumes:
+    #   - /var/run/docker.sock:/var/run/docker.sock
