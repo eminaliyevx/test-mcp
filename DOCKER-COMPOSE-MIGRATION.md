@@ -9,7 +9,9 @@ The project has been updated to use the modern Docker Compose V2 syntax (`docker
 ## 📝 **Files Updated**
 
 ### Scripts Updated
+
 1. **`scripts/deploy.sh`** ✅
+
    - `docker-compose down` → `docker compose down`
    - `docker-compose up` → `docker compose up`
    - `docker-compose ps` → `docker compose ps`
@@ -18,6 +20,7 @@ The project has been updated to use the modern Docker Compose V2 syntax (`docker
    - `docker-compose pull` → `docker compose pull`
 
 2. **`scripts/check-ports.sh`** ✅
+
    - Updated deployment command references
    - Updated pro-tip examples
 
@@ -25,12 +28,15 @@ The project has been updated to use the modern Docker Compose V2 syntax (`docker
    - Updated deployment instructions
 
 ### Documentation Updated
+
 1. **`README.md`** ✅
+
    - All command examples updated
    - Deployment instructions updated
    - Monitoring commands updated
 
 2. **`DEPLOYMENT-SUMMARY.md`** ✅
+
    - Quick start commands updated
    - Troubleshooting commands updated
    - Monitoring section updated
@@ -43,6 +49,7 @@ The project has been updated to use the modern Docker Compose V2 syntax (`docker
 ## ⚡ **Key Changes**
 
 ### Before (Legacy V1)
+
 ```bash
 docker-compose up --build -d
 docker-compose ps
@@ -51,6 +58,7 @@ docker-compose down
 ```
 
 ### After (Modern V2)
+
 ```bash
 docker compose up --build -d
 docker compose ps
