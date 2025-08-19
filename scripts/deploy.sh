@@ -41,7 +41,7 @@ check_docker() {
         exit 1
     fi
     
-    if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+    if ! docker compose version &> /dev/null; then
         print_error "Docker Compose is not installed. Please install Docker Compose first."
         exit 1
     fi
@@ -89,21 +89,21 @@ deploy_services() {
     print_status "Building and starting services..."
     
     # Stop existing services
-    docker-compose down --remove-orphans
+    docker compose down --remove-orphans
     
     # Build and start services
-    docker-compose up --build -d
+    docker compose up --build -d
     
     # Wait for services to be healthy
     print_status "Waiting for services to be healthy..."
     sleep 10
     
     # Check service status
-    if docker-compose ps | grep -q "Up"; then
+    if docker compose ps | grep -q "Up"; then
         print_success "Services are running"
     else
         print_error "Services failed to start"
-        docker-compose logs
+        docker compose logs
         exit 1
     fi
 }
@@ -120,13 +120,13 @@ echo "  • Web Interface: http://localhost:8090"
 echo "  • Redis: localhost:6380"
     echo ""
     echo "🔧 Management Commands:"
-    echo "  • View logs: docker-compose logs -f"
-    echo "  • Stop services: docker-compose down"
-    echo "  • Restart services: docker-compose restart"
-    echo "  • Update services: docker-compose pull && docker-compose up -d"
+    echo "  • View logs: docker compose logs -f"
+    echo "  • Stop services: docker compose down"
+    echo "  • Restart services: docker compose restart"
+    echo "  • Update services: docker compose pull && docker compose up -d"
     echo ""
     echo "📊 Current Status:"
-    docker-compose ps
+    docker compose ps
 }
 
 # Security reminder

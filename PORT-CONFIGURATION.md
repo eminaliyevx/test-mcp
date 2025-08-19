@@ -157,7 +157,7 @@ services:
 Then find the assigned port with:
 
 ```bash
-docker-compose port pentest-mcp-server 3000
+docker compose port pentest-mcp-server 3000
 ```
 
 ## 📝 Notes
@@ -173,7 +173,7 @@ docker-compose port pentest-mcp-server 3000
 
 ```bash
 # Method 1: Environment variables
-MCP_PORT=9001 WEB_PORT=9002 REDIS_PORT=9003 docker-compose up -d
+MCP_PORT=9001 WEB_PORT=9002 REDIS_PORT=9003 docker compose up -d
 
 # Method 2: Override file
 # Create docker-compose.override.yml with custom ports
@@ -186,7 +186,7 @@ MCP_PORT=9001 WEB_PORT=9002 REDIS_PORT=9003 docker-compose up -d
 
 ```bash
 # Check all services are running
-docker-compose ps
+docker compose ps
 
 # Test connectivity
 curl http://localhost:8765/health

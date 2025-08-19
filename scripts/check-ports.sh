@@ -120,7 +120,7 @@ if [ $conflicts -eq 0 ]; then
     echo "  • Web Interface: http://localhost:$WEB_PORT"
     echo "  • Redis: localhost:$REDIS_PORT"
     echo ""
-    echo "🚀 Deploy with: docker-compose up --build -d"
+    echo "🚀 Deploy with: docker compose up --build -d"
 else
     print_warning "⚠️  $conflicts port(s) are already in use."
     echo ""
@@ -135,5 +135,5 @@ else
 fi
 
 echo ""
-echo "💡 Pro Tip: Use 'docker-compose port SERVICE_NAME INTERNAL_PORT' to find assigned ports"
-echo "   Example: docker-compose port pentest-mcp-server 3000"
+echo "💡 Pro Tip: Use 'docker compose port SERVICE_NAME INTERNAL_PORT' to find assigned ports"
+echo "   Example: docker compose port pentest-mcp-server 3000"

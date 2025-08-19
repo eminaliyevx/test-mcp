@@ -44,7 +44,7 @@ A dockerized Model Context Protocol (MCP) server designed for penetration testin
 2. Build and start the server:
 
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 3. The server will be available on:
@@ -115,10 +115,10 @@ cd test-mcp
 mkdir -p data logs
 
 # Start the services
-docker-compose up -d
+docker compose up -d
 
 # Check status
-docker-compose ps
+docker compose ps
 ```
 
 3. **Configure Networking**
@@ -218,10 +218,10 @@ This server is intentionally designed with minimal security restrictions for tes
 
 ```bash
 # View server logs
-docker-compose logs -f pentest-mcp-server
+docker compose logs -f pentest-mcp-server
 
 # View all service logs
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### Health Checks
@@ -230,7 +230,7 @@ The server includes health check endpoints. Monitor with:
 
 ```bash
 # Check container health
-docker-compose ps
+docker compose ps
 
 # Manual health check
 docker exec pentest-mcp-server node -e "console.log('Health check')"

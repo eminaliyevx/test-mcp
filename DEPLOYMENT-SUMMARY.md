@@ -40,13 +40,13 @@ The MCP server provides the following pentesting tools:
 
 ```bash
 # Build and start the server
-docker-compose up --build -d
+docker compose up --build -d
 
 # Check status
-docker-compose ps
+docker compose ps
 
 # View logs
-docker-compose logs -f pentest-mcp-server
+docker compose logs -f pentest-mcp-server
 ```
 
 ### Option 2: Local Development
@@ -124,7 +124,7 @@ cd test-mcp
 ./scripts/deploy.sh production
 
 # Or manually
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 3. **Configure Networking:**
@@ -224,12 +224,12 @@ Edit `docker-compose.yml` to:
 
 ```bash
 # Check logs
-docker-compose logs pentest-mcp-server
+docker compose logs pentest-mcp-server
 
 # Rebuild from scratch
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
+docker compose down
+docker compose build --no-cache
+docker compose up -d
 ```
 
 ### Connection Issues
@@ -257,11 +257,11 @@ sudo chown -R $USER:$USER data/ logs/
 ### Health Checks
 
 - HTTP: `http://localhost:8765/health`
-- Docker: `docker-compose ps`
+- Docker: `docker compose ps`
 
 ### Log Locations
 
-- Container logs: `docker-compose logs -f`
+- Container logs: `docker compose logs -f`
 - Application logs: `./logs/` directory
 - Audit logs: Stored in exfiltration data
 
@@ -281,8 +281,8 @@ sudo chown -R $USER:$USER data/ logs/
 git pull origin main
 
 # Rebuild and restart
-docker-compose down
-docker-compose up --build -d
+docker compose down
+docker compose up --build -d
 ```
 
 ### Backup and Recovery

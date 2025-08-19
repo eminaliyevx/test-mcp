@@ -149,10 +149,10 @@ print_status "The Pentest MCP Server appears to be ready for deployment"
 
 echo ""
 echo "📋 Next Steps:"
-echo "  1. Deploy using: docker-compose up --build -d"
+echo "  1. Deploy using: docker compose up --build -d"
 echo "  2. Test with client: node test-client/simple-test.js"
-echo "  3. Access web interface: http://localhost:8080"
-echo "  4. Check health: http://localhost:3000/health"
+echo "  3. Access web interface: http://localhost:8090"
+echo "  4. Check health: http://localhost:8765/health"
 
 echo ""
 print_warning "⚠️  Remember: Only use this tool with proper authorization!"
