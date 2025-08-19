@@ -24,7 +24,7 @@ COPY tsconfig.json ./
 # Install all dependencies (including dev dependencies for build)
 RUN npm ci
 
-# Copy source code
+# Copy source code (dockerignore excludes problematic files)
 COPY src/ ./src/
 
 # Build the TypeScript code
